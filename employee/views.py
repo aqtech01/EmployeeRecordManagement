@@ -1,10 +1,12 @@
+from multiprocessing import AuthenticationError
 from django.db import IntegrityError
 from django.shortcuts import render,redirect
 from .models import *
 from django.contrib import messages
+from django.contrib.auth import authenticate,login,logout
 # Create your views here.
 def home(request):
-    return render(request, "employee/base.html")
+    return render(request, "employee/index.html")
 
 def employee_signup(request):
     if request.method == "POST":
@@ -13,8 +15,8 @@ def employee_signup(request):
         last_name = data.get("last_name")
         employee_code = data.get("employee_code")
         email = data.get("email")
-        password = data.get("employee_password")
-        confirm_password = data.get("employee_confirm_password")
+        password = data.get("password")
+        confirm_password = data.get("confirm_password")
         
         if password != confirm_password:
             messages.error(request, "Password and Confirm Password should be the same")
@@ -32,4 +34,17 @@ def employee_signup(request):
     
     return render(request, "employee/signup.html", {"title": "Employee SignUp"})
 def employee_signin(request):
+    if request.method == "POST":
+        data = request.POST
+        email = data.get("email")
+        password = data.get("password")
+        try:
+            user = authenticate(username= email,password=password)
+            if User:
+                login(request,user)
+                return redirect("/")
+            else:
+                messages.error("User not found")
+        except AuthenticationError as e:
+            return f" Error : {e}"
     return render(request, "employee/signin.html")
