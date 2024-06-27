@@ -1,0 +1,67 @@
+{% extends "employee/base.html" %}
+{% block main %}
+
+<div class="container mt-5">
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Holy guacamole!</strong> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    <h2>Employee Detail Form</h2>
+    
+    <form method="post" action="{% url "profile" %}">
+        {% csrf_token %}
+        <h5 class="text-success p-3 text-center" style="border-bottom: 2px solid">Profile</h5>
+        <div class="container-fluid mt-4">
+            <form action="{% url 'employee_signup' %}" method="post">
+                {% csrf_token %}
+                <div class="row g-3">
+                    <div class="mb-3 col-6">
+                        <label for="firstname" class="form-label">First Name</label>
+                        <input type="text" class="form-control" placeholder="First name" name="first_name" aria-label="First name" value="{{employee.user.first_name}}">
+                    </div>
+                    <div class="mb-3 col-6">
+                        <label for="lastname" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" placeholder="Last name" name="last_name" aria-label="Last name"  value="{{employee.user.last_name}}">
+                    </div>
+        <div class="form-group ">
+            <label for="employee_code">Employee Code</label>
+            <input type="number" id="employee_code" name="employee_code" class="form-control"  value="{{employee.employee_code}}">
+        </div>
+        <div class="form-group col-6">
+            <label for="employee_department">Employee Department</label>
+            <input type="text" id="employee_department" name="employee_department" class="form-control"  value="{{employee.employee_department}}">
+        </div>
+        <div class="form-group col-6">
+            <label for="employee_desigantion">Employee Designation</label>
+            <input type="text" id="employee_desigantion" name="employee_desigantion" class="form-control"  value="{{employee.employee_desigantion}}">
+        </div>
+        <div class="form-group col-6">
+            <label for="email">Employee Email</label>
+            <input type="text"  id="disabledTextInput" name="email" class="form-control" disabled readonly   value="{{employee.user.email}}">
+        </div>
+        <div class="form-group col-6">
+            <label for="employee_contact">Employee Contact</label>
+            <input type="text" id="employee_contact" name="employee_contact" class="form-control"  value="{{employee.employee_contact}}">
+        </div>
+        <div class="form-group col-6">
+            <label for="employee_gender">Employee Gender [{{employee.employee_gender}}]</label>
+            <select id="employee_gender" name="employee_gender" class="form-control">
+                <option value="" disabled selected>Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+        <div class="form-group col-6">
+            <label for="employee_joining_date">Employee Joining Date</label>
+            <input type="date" id="employee_joining_date" name="employee_joining_date" class="form-control" value=" {{employee.employee_joining_date}}">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% endblock main %}

@@ -5,10 +5,14 @@ from .models import *
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
 # Create your views here.
+
 def home(request):
+    if not request.user.is_authenticated:
+        return redirect("employee_signin")
     return render(request, "employee/index.html")
 
 def employee_signup(request):
+   
     if request.method == "POST":
         data = request.POST
         first_name = data.get("first_name")
@@ -34,6 +38,7 @@ def employee_signup(request):
     
     return render(request, "employee/signup.html", {"title": "Employee SignUp"})
 def employee_signin(request):
+    
     if request.method == "POST":
         data = request.POST
         email = data.get("email")
@@ -47,4 +52,47 @@ def employee_signin(request):
                 messages.error("User not found")
         except AuthenticationError as e:
             return f" Error : {e}"
+   
     return render(request, "employee/signin.html")
+
+
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect("employee_signin")
+    
+    user = request.user
+    employee= EmployeeDetail.objects.get(user=user)
+
+    if request.method == "POST":
+        data = request.POST
+        first_name = data.get("first_name")
+        last_name = data.get("last_name")
+        employee_code = data.get("employee_code")
+        employee_department = data.get("employee_department")
+        employee_designation = data.get("employee_designation")
+        employee_contact = data.get("employee_Contact")
+        employee_gender = data.get("employee_gender")
+        employee_joining_date = data.get("employee_joining_date")
+        # Update the value after geeting the value from form 
+        employee.user.first_name= first_name
+        employee.user.last_name = last_name
+        employee.employee_code= employee_code
+        employee.employee_department = employee_department
+        employee.employee_designation = employee_designation
+        employee.employee_contact = employee_contact
+        employee.employee_gender = employee_gender
+        if employee_joining_date:
+            employee.employee_joining_date = employee_joining_date
+            try:
+                employee.user.save()
+                employee.save()
+                messages.success(request, "Profile Updated Successfully")
+            except:
+                return "Something Wrong"
+            
+    return render(request, "employee/profile.html",{"employee":employee})
+
+
+def employee_logout(request):
+    logout(request)
+    return redirect("home")
