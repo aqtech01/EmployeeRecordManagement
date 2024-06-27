@@ -1,6 +1,8 @@
 from multiprocessing import AuthenticationError
 from django.db import IntegrityError
 from django.shortcuts import render,redirect
+
+from employee.forms import EmployeeEducationForm
 from .models import *
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
@@ -9,7 +11,7 @@ from django.contrib.auth import authenticate,login,logout
 def home(request):
     if not request.user.is_authenticated:
         return redirect("employee_signin")
-    return render(request, "employee/index.html")
+    return render(request, "employee/index.html",{"title":"Home"})
 
 def employee_signup(request):
    
@@ -53,7 +55,7 @@ def employee_signin(request):
         except AuthenticationError as e:
             return f" Error : {e}"
    
-    return render(request, "employee/signin.html")
+    return render(request, "employee/signin.html",{"title":"Signin"})
 
 
 def profile(request):
@@ -90,9 +92,27 @@ def profile(request):
             except:
                 return "Something Wrong"
             
-    return render(request, "employee/profile.html",{"employee":employee})
+    return render(request, "employee/profile.html",{"employee":employee,"title":"Profile"})
 
 
 def employee_logout(request):
     logout(request)
     return redirect("home")
+# Employee Education Details
+
+def employee_education(request):
+
+    form = EmployeeEducationForm()
+    if request.method == "POST":
+        form = EmployeeEducationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("profile")
+
+
+    return render(request,"employee/education.html",{"form":form})
+
+# Admin Login 
+
+def admin_signin(request):
+    return render(request,"employee/admin/signin.html")
